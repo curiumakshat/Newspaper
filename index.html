@@ -1,23 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Newspaper</title>
+    <title>Curium News - Tech Daily</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <nav>
         <div class="navbar">
-            <a class="logo" href="index.html">Curium News</a>
+            <div class="logo-container">
+                <a class="logo" href="index.html">CURIUMNEWS</a>
+                <a class="tagline" href="index.html">your daily tech fax</a>
+            </div>
             <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search news...">
-                <button id="search-button">Search</button>
+                <a href="#" class="subscribe-btn" id="subscribe-link">Subscribe</a>
+                <!-- <input type="text" id="search-input" placeholder="Search news..."> -->
+                <!-- <button id="search-button">Search</button> -->
             </div>
         </div>
     </nav>
-    <!-- <h1>hello js developers</h1> -->
-    <script src="script.js"></script>
-    
+
+    <main class="container">
+        <div id="news-grid" class="grid-layout">
+            <!-- News articles will be injected here -->
+        </div>
+    </main>
+
+    <script type="module" src="script.js"></script>
 </body>
+
 </html>
