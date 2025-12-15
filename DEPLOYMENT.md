@@ -246,6 +246,7 @@ All platforms require you to set the `NEWS_API_KEY` environment variable:
 
 - Ensure all dependencies are in `package.json` (not just `devDependencies`)
 - Check that Node.js version is compatible (use Node 18+)
+- **Vercel "Permission denied" error**: Delete `vercel.json` and let Vercel auto-detect settings
 
 ### API Key Not Working
 

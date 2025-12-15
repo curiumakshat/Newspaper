@@ -12,14 +12,12 @@ Your newspaper website is ready to deploy! Here's the fastest way to get it live
    ```
 
 2. **Deploy to Vercel**:
-   - Visit: https://vercel.com/new
-   - Click "Import Git Repository"
-   - Select your `Newspaper` repository
-   - Vercel will auto-detect Vite settings
-   - Add environment variable:
-     - **Name**: `NEWS_API_KEY`
-     - **Value**: [Your GNews API key from .env file]
-   - Click "Deploy"
+   - See detailed instructions in [VERCEL_DEPLOY.md](./VERCEL_DEPLOY.md)
+   - Quick version:
+     - Visit: https://vercel.com/new
+     - Import your repository
+     - Add environment variable `NEWS_API_KEY` with your API key
+     - Click "Deploy"
 
 3. **Done!** 🎉 Your site will be live in ~1 minute
 
