@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "It will be a site were top five tech news will be given using an API key from news.api and will be providing that article using my telegram bot to the\r people",
   "main": "script.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "start": "node index.js",
     "dev": "vite",
@@ -20,11 +24,8 @@
     "url": "https://github.com/curiumakshat/Newspaper/issues"
   },
   "homepage": "https://github.com/curiumakshat/Newspaper#readme",
-  "devDependencies": {
+  "dependencies": {
     "vite": "^7.3.0"
   },
-  "dependencies": {
-    "dotenv": "^17.2.3",
-    "nodemon": "^3.1.11"
-  }
+  "devDependencies": {}
 }
