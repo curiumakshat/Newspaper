@@ -1,5 +1,5 @@
 
-const API_KEY = process.env.NEWS_API_KEY;
+const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 const NEWS_CONTAINER = document.getElementById('news-grid');
 
 // Calculate date 3 days ago in YYYY-MM-DD format (Optional for GNews if we just want latest)
