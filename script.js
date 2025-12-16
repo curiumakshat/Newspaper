@@ -8,27 +8,41 @@ threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 const fromDate = threeDaysAgo.toISOString(); // GNews requires full ISO string if used
 
 async function fetchNews() {
-    try {
-        // GNews API Endpoint
-        // Documentation: https://gnews.io/docs/v4#search-endpoint
-        // Using 'token' param effectively acts as the API key
+    if (!API_KEY) {
+        console.error('API Key is missing! Check your .env file or Vercel settings.');
+        NEWS_CONTAINER.innerHTML = `<p class="error-msg">⚠️ Configuration Error: API Key is missing.</p>`;
+        return;
+    }
 
+    try {
         const url = `https://gnews.io/api/v4/search?q=technology&lang=en&max=10&sortby=publishedAt&token=${API_KEY}`;
+        console.log('Fetching news from:', url.replace(API_KEY, 'HIDDEN_KEY')); // Log URL safely
 
         const response = await fetch(url);
+
+        if (!response.ok) {
+            const status = response.status;
+            const data = await response.json().catch(() => ({})); // Handle non-JSON errors
+            const errorMsg = data.errors ? JSON.stringify(data.errors) : (data.message || `HTTP Error ${status}`);
+            throw new Error(errorMsg);
+        }
+
         const data = await response.json();
 
-        if (response.ok && data.articles) {
+        if (data.articles) {
             renderNews(data.articles);
         } else {
-            console.error('Error fetching news:', data.errors);
-            // Handle specific GNews error messages if possible
-            const errorMsg = data.errors ? JSON.stringify(data.errors) : (data.message || 'Unknown Error');
-            NEWS_CONTAINER.innerHTML = `<p>Error loading news: ${errorMsg}</p>`;
+            throw new Error('No articles found in response');
         }
+
     } catch (error) {
-        console.error('Network error:', error);
-        NEWS_CONTAINER.innerHTML = `<p>Failed to connect to news source.</p>`;
+        console.error('Fetch error:', error);
+        NEWS_CONTAINER.innerHTML = `
+            <div class="error-container">
+                <p>⚠️ Failed to load news.</p>
+                <small>${error.message}</small>
+            </div>
+        `;
     }
 }
 
