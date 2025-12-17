@@ -9,28 +9,31 @@ const fromDate = threeDaysAgo.toISOString(); // GNews requires full ISO string i
 
 async function fetchNews() {
     if (!API_KEY) {
-        console.error('API Key is missing! Check your .env file or Vercel settings.');
+        console.error('API Key is missing! Check your .env file.');
         NEWS_CONTAINER.innerHTML = `<p class="error-msg">⚠️ Configuration Error: API Key is missing.</p>`;
         return;
     }
 
     try {
-        const url = `https://gnews.io/api/v4/search?q=technology&lang=en&max=10&sortby=publishedAt&token=${API_KEY}`;
-        console.log('Fetching news from:', url.replace(API_KEY, 'HIDDEN_KEY')); // Log URL safely
+        // NewsData.io API endpoint
+        // Using 'latest' endpoint for breaking news, filtered by English language
+        const url = `https://newsdata.io/api/1/latest?apikey=${API_KEY}&language=en&category=technology`;
+        console.log('Fetching news from:', url.replace(API_KEY, 'HIDDEN_KEY'));
 
         const response = await fetch(url);
 
         if (!response.ok) {
             const status = response.status;
-            const data = await response.json().catch(() => ({})); // Handle non-JSON errors
-            const errorMsg = data.errors ? JSON.stringify(data.errors) : (data.message || `HTTP Error ${status}`);
+            const data = await response.json().catch(() => ({}));
+            const errorMsg = data.results && data.results.message ? data.results.message : (data.message || `HTTP Error ${status}`);
             throw new Error(errorMsg);
         }
 
         const data = await response.json();
 
-        if (data.articles) {
-            renderNews(data.articles);
+        // NewsData.io returns 'results' array instead of 'articles'
+        if (data.results && data.results.length > 0) {
+            renderNews(data.results);
         } else {
             throw new Error('No articles found in response');
         }
@@ -50,24 +53,35 @@ function renderNews(articles) {
     NEWS_CONTAINER.innerHTML = '';
 
     articles.forEach(article => {
-        // GNews uses 'image', NewsAPI used 'urlToImage'
-        const imageUrl = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=2070&auto=format&fit=crop';
+        // NewsData.io field mapping
+        // image_url can be null
+        const imageUrl = article.image_url || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=2070&auto=format&fit=crop';
 
-        const date = new Date(article.publishedAt).toLocaleDateString('en-US', {
+        // NewsData.io uses 'pubDate'
+        const date = article.pubDate ? new Date(article.pubDate).toLocaleDateString('en-US', {
             weekday: 'short', year: 'numeric', month: 'long', day: 'numeric'
-        });
+        }) : 'Recent';
+
+        // Filter out articles with no image if desired, or keep generic.
+        // Also check if description exists.
 
         const card = document.createElement('article');
         card.className = 'news-card';
 
+        // NewsData uses 'link' instead of 'url'
+        // 'source_id' or check if 'source_name' exists (API specifics vary, assuming source_id or separate source field not always simple string)
+        // Actually NewsData returns 'source_id' usually, or 'source_name' in some tiers? 
+        // Let's use article.source_id or fallback.
+        const sourceName = article.source_id || 'News';
+
         card.innerHTML = `
             <div class="card-image">
-                <img src="${imageUrl}" alt="${article.title}" loading="lazy">
+                <img src="${imageUrl}" alt="${article.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=2070&auto=format&fit=crop'">
             </div>
             <div class="news-content">
-                <span class="news-source">${article.source.name}</span>
-                <a href="${article.url}" target="_blank" class="news-title">${article.title}</a>
-                <p class="news-desc">${article.description || ''}</p>
+                <span class="news-source">${sourceName}</span>
+                <a href="${article.link}" target="_blank" class="news-title">${article.title}</a>
+                <p class="news-desc">${article.description ? (article.description.length > 100 ? article.description.substring(0, 100) + '...' : article.description) : ''}</p>
                 <span class="news-date">${date}</span>
             </div>
         `;
