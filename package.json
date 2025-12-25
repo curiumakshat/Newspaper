@@ -10,6 +10,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "vite",
+    "dev:secure": "npx vercel dev",
     "build": "vite build",
     "preview": "vite preview"
   },
